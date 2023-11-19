@@ -1,3 +1,8 @@
+/*
+    jswa v1.0 - https://github.com/SevenworksDev/jswa
+    Created by https://sevenworks.eu.org
+*/
+
 var jswa = jswa || {};
 
 jswa.windows = {};

@@ -1,5 +1,5 @@
 /*
-    jswa v1.0 - https://github.com/SevenworksDev/jswa
+    jswa v1.1 - https://github.com/SevenworksDev/jswa
     Created by https://sevenworks.eu.org
 */
 
@@ -77,4 +77,59 @@ jswa.close = function (name) {
     JSWA.windowRef.close();
     delete jswa.windows[name];
   }
+};
+
+jswa.get = function (fileURL) {
+  fetch(fileURL)
+    .then(response => response.text())
+    .then(data => {
+      const lines = data.split('\n');
+      let lineNumber = 0;
+
+      function processLine() {
+        if (lineNumber < lines.length) {
+          const line = lines[lineNumber].trim();
+          lineNumber++;
+
+          const [command, ...params] = line.split(' ');
+
+          switch (command) {
+            case 'create':
+              jswa.create(params[0], parseFloat(params[1]), parseFloat(params[2]), parseFloat(params[3]), parseFloat(params[4]));
+              processLine();
+              break;
+            case 'move':
+              jswa.move(params[0], parseFloat(params[1]), parseFloat(params[2]), parseInt(params[3]));
+              processLine();
+              break;
+            case 'resize':
+              jswa.resize(params[0], parseFloat(params[1]), parseFloat(params[2]));
+              processLine();
+              break;
+            case 'write':
+              jswa.write(params[0], params.slice(1).join(' '));
+              processLine();
+              break;
+            case 'title':
+              jswa.title(params[0], params[1]);
+              processLine();
+              break;
+            case 'close':
+              jswa.close(params[0]);
+              processLine();
+              break;
+            case 'sleep':
+              const sleepDuration = parseInt(params[0]);
+              setTimeout(() => processLine(), sleepDuration);
+              break;
+            default:
+              console.error(`Unknown JSWA command: ${command}`);
+              processLine();
+          }
+        }
+      }
+
+      processLine();
+    })
+    .catch(error => console.error('Error fetching JSWA file:', error));
 };

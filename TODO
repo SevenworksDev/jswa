@@ -1,0 +1,21 @@
+JSWA Single-line / Multi-line comments
+
+%% Single-line
+
+<==
+    Multi-line
+==>
+
+
+
+
+
+JSWA JS Execution
+
+js alert("Hello");
+
+
+
+
+
+Ignore blank lines

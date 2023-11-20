@@ -1,0 +1,6 @@
+create window1 100 100 400 300
+move window1 100 100 500
+sleep 1000
+move window1 500 500 500
+sleep 1000
+close window1

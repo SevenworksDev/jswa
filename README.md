@@ -51,6 +51,12 @@ Closes an existing window.
 
 - `name`: The name of the window to be closed.
 
+### `jswa.run(fileURL)`
+
+Run a .jswa file.
+
+- `fileURL`: The URL to a .jswa file.
+
 ## Example Usage
 
 ```javascript

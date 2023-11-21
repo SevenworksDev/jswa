@@ -45,6 +45,19 @@ Sets the title of an existing window.
 - `name`: The name of the window.
 - `newTitle`: The new title for the window.
 
+### `jswa.sound(audio)`
+
+Plays audio.
+
+- `audio`: Audio URL.
+
+### `jswa.shake(name, duration) / jswa.hardshake(name, duration)`
+
+Shakes a window (or violently shakes a window)
+
+- `name`: The name of the window.
+- `duration`: The duration for shaking the window.
+
 ### `jswa.close(name)`
 
 Closes an existing window.

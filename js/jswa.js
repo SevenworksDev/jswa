@@ -1,5 +1,5 @@
 /*
-    jswa v1.1 - https://github.com/SevenworksDev/jswa
+    jswa v1.2 - https://github.com/SevenworksDev/jswa
     Created by https://sevenworks.eu.org
 */
 
@@ -71,6 +71,81 @@ jswa.title = function (name, newTitle) {
   }
 };
 
+jswa.sound = function (audioURL) {
+  var audio = new Audio(audioURL);
+  audio.play();
+};
+
+jswa.fullscreen = function (name, duration) {
+  var JSWA = jswa.windows[name];
+  if (JSWA) {
+    JSWA.windowRef.document.documentElement.requestFullscreen();
+    setTimeout(() => {
+      document.exitFullscreen();
+    }, duration);
+  }
+};
+
+jswa.shake = function (name, duration) {
+  var JSWA = jswa.windows[name];
+  if (JSWA) {
+    var originalX = JSWA.x;
+    var originalY = JSWA.y;
+    var distance = 10;
+    var startTime = null;
+
+    function shakeStep() {
+      if (!startTime) startTime = new Date().getTime();
+
+      var currentTime = new Date().getTime();
+      var elapsedTime = currentTime - startTime;
+
+      if (elapsedTime < duration) {
+        var randomX = originalX + (Math.random() * 2 - 1) * distance;
+        var randomY = originalY + (Math.random() * 2 - 1) * distance;
+
+        JSWA.windowRef.moveTo(randomX, randomY);
+
+        setTimeout(shakeStep, 20);
+      } else {
+        JSWA.windowRef.moveTo(originalX, originalY);
+      }
+    }
+
+    shakeStep();
+  }
+};
+
+jswa.hardshake = function (name, duration) {
+  var JSWA = jswa.windows[name];
+  if (JSWA) {
+    var originalX = JSWA.x;
+    var originalY = JSWA.y;
+    var distance = 60;
+    var startTime = null;
+
+    function shakeStep() {
+      if (!startTime) startTime = new Date().getTime();
+
+      var currentTime = new Date().getTime();
+      var elapsedTime = currentTime - startTime;
+
+      if (elapsedTime < duration) {
+        var randomX = originalX + (Math.random() * 2 - 1) * distance;
+        var randomY = originalY + (Math.random() * 2 - 1) * distance;
+
+        JSWA.windowRef.moveTo(randomX, randomY);
+
+        setTimeout(shakeStep, 20);
+      } else {
+        JSWA.windowRef.moveTo(originalX, originalY);
+      }
+    }
+
+    shakeStep();
+  }
+};
+
 jswa.close = function (name) {
   var JSWA = jswa.windows[name];
   if (JSWA) {
@@ -112,6 +187,22 @@ jswa.get = function (fileURL) {
               break;
             case 'title':
               jswa.title(params[0], params[1]);
+              processLine();
+              break;
+            case 'sound':
+              jswa.sound(params[0]);
+              processLine();
+              break;
+            case 'fullscreen':
+              jswa.fullscreen(params[0], parseInt(params[1]));
+              processLine();
+              break;
+            case 'shake':
+              jswa.shake(params[0], parseInt(params[1]));
+              processLine();
+              break;
+            case 'hardshake':
+              jswa.hardshake(params[0], parseInt(params[1]));
               processLine();
               break;
             case 'close':

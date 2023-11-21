@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSWA Code Editor</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #272822;
+      color: #f8f8f2;
+      overflow: hidden;
+    }
+
+    #top-bar {
+      background-color: #1e1e1e;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    #editor-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    #editor {
+      width: 100%;
+      min-height: 100%;
+      font-size: 24px;
+      background-color: #1e1e1e;
+      padding: 10px;
+      box-sizing: border-box;
+      overflow: auto;
+    }
+
+    #save-button {
+      background-color: #bd93f9;
+      color: #272822;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    #run-button {
+      background-color: #50fa7b;
+      color: #272822;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="top-bar">
+    <input type="file" id="file-input" accept=".jswa" />
+    <button id="save-button">Save</button>
+    <button id="run-button">Run</button>
+  </div>
+
+  <div id="editor-container">
+    <div id="editor" contenteditable="true"></div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      /*
+        jswa v1.1 - https://github.com/SevenworksDev/jswa
+        Created by https://sevenworks.eu.org
+      */
+      var jswa=jswa||{};jswa.windows={},jswa.create=function(e,a,t,s,o){var n=window.open("",e,`width=${s},height=${o},left=${a},top=${t}`);jswa.windows[e]={windowRef:n,x:a,y:t,width:s,height:o,title:""}},jswa.move=function(e,a,t,s){var o=jswa.windows[e];if(o){var n=o.x,i=o.y,w=a-n,r=t-i,c=null;requestAnimationFrame(function e(a){c||(c=a);var t=(a-c)/s;if(t<1){var l=n+w*t,f=i+r*t;o.windowRef.moveTo(l,f),requestAnimationFrame(e)}}),o.x=a,o.y=t}},jswa.resize=function(e,a,t){var s=jswa.windows[e];s&&(s.windowRef.resizeTo(a,t),s.width=a,s.height=t)},jswa.write=function(e,a){var t=jswa.windows[e];t&&(t.windowRef.document.body.innerHTML=a)},jswa.title=function(e,a){var t=jswa.windows[e];t&&(t.windowRef.document.title=a,t.title=a)},jswa.close=function(e){var a=jswa.windows[e];a&&(a.windowRef.close(),delete jswa.windows[e])},jswa.get=function(e){fetch(e).then(e=>e.text()).then(e=>{const a=e.split("\n");let t=0;!function e(){if(t<a.length){const s=a[t].trim();t++;const[o,...n]=s.split(" ");switch(o){case"create":jswa.create(n[0],parseFloat(n[1]),parseFloat(n[2]),parseFloat(n[3]),parseFloat(n[4])),e();break;case"move":jswa.move(n[0],parseFloat(n[1]),parseFloat(n[2]),parseInt(n[3])),e();break;case"resize":jswa.resize(n[0],parseFloat(n[1]),parseFloat(n[2])),e();break;case"write":jswa.write(n[0],n.slice(1).join(" ")),e();break;case"title":jswa.title(n[0],n[1]),e();break;case"close":jswa.close(n[0]),e();break;case"sleep":const a=parseInt(n[0]);setTimeout(()=>e(),a);break;default:console.error(`Unknown function: ${o}`),e()}}}()}).catch(e=>console.error("Error fetching JSWA file:",e))};
+
+      const fileInput = document.getElementById('file-input');
+      const editor = document.getElementById('editor');
+      const saveButton = document.getElementById('save-button');
+      const runButton = document.getElementById('run-button');
+
+      fileInput.addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            editor.innerText = e.target.result;
+          };
+          reader.readAsText(file);
+        }
+      });
+
+      editor.addEventListener('drop', function (event) {
+        event.preventDefault();
+        const file = event.dataTransfer.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            editor.innerText = e.target.result;
+          };
+          reader.readAsText(file);
+        }
+      });
+
+      editor.addEventListener('dragover', function (event) {
+        event.preventDefault();
+      });
+
+      saveButton.addEventListener('click', function () {
+        const content = editor.innerText;
+        if (content) {
+          const blob = new Blob([content], { type: 'text/plain' });
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'animation.jswa';
+          link.click();
+        } else {
+          console.log('Editor is empty.');
+        }
+      });
+
+      runButton.addEventListener('click', function () {
+        const content = editor.innerText;
+        if (content) {
+          const blob = new Blob([content], { type: 'text/plain' });
+          const blobURL = URL.createObjectURL(blob);
+          jswa.get(blobURL);
+        } else {
+          console.log('Editor is empty.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
